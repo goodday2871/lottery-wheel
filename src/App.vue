@@ -1,6 +1,11 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 flex flex-col items-center p-4 sm:p-8">
-    <div class="bg-white rounded-3xl shadow-2xl p-4 sm:p-8 max-w-4xl w-full">
+  <div class="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 flex flex-col items-center p-4 sm:p-8 relative overflow-hidden">
+    <!-- 動態背景彩帶 -->
+    <div class="confetti-container z-50">
+      <div v-for="i in confettiCount" :key="i" class="confetti" :style="getConfettiStyle(i)"></div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-2xl p-4 sm:p-8 max-w-4xl w-full relative">
       <!-- 轉盤完整區域：佔滿視窗高度 -->
       <div class="min-h-[calc(100dvh-2rem)] sm:min-h-[calc(100dvh-4rem)] flex flex-col">
         <h1 class="text-[60px] leading-[80px] font-bold text-center mb-4 sm:mb-8 text-gray-800">幸運轉盤</h1>
@@ -99,6 +104,7 @@ const wheelCanvas = ref(null)
 const canvasSize = ref(400)
 const rotation = ref(0)
 const showPopup = ref(false)
+const confettiCount = ref(30) // 響應式彩帶數量
 
 // 根據 canvas 大小計算箭頭大小
 const arrowSize = computed(() => {
@@ -115,6 +121,32 @@ const colors = [
   '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2',
   '#F8B739', '#52B788', '#E63946', '#457B9D'
 ]
+
+// 彩帶樣式生成器
+const getConfettiStyle = (index) => {
+  const confettiColors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ffa07a', '#f7dc6f', '#bb8fce', '#85c1e2', '#52b788']
+  const randomColor = confettiColors[index % confettiColors.length]
+  const randomLeft = (index * 7) % 100
+  const randomDelay = (index * 0.8) % 8
+  const randomDuration = 12 + (index % 6)
+  const randomSize = 8 + (index % 8)
+
+  return {
+    left: `${randomLeft}%`,
+    backgroundColor: randomColor,
+    animationDelay: `${randomDelay}s`,
+    animationDuration: `${randomDuration}s`,
+    width: `${randomSize}px`,
+    height: `${randomSize * 2}px`,
+    opacity: 0.6 + (index % 3) * 0.1
+  }
+}
+
+// 更新彩帶數量
+const updateConfettiCount = () => {
+  const width = window.innerWidth
+  confettiCount.value = width >= 1024 ? 30 : 15
+}
 
 // 計算合適的 canvas 大小
 const calculateCanvasSize = () => {
@@ -278,13 +310,15 @@ const handleResize = () => {
   clearTimeout(resizeTimeout)
   resizeTimeout = setTimeout(() => {
     calculateCanvasSize()
+    updateConfettiCount()
     drawWheel()
   }, 100)
 }
 
 onMounted(async () => {
-  // 初始化 canvas 大小
+  // 初始化 canvas 大小和彩帶數量
   calculateCanvasSize()
+  updateConfettiCount()
 
   // 設定預設選項
   const defaultOptions = Array.from({ length: 20 }, (_, i) => `${i + 1}桌`)
@@ -316,3 +350,54 @@ watch(canvasSize, async () => {
   drawWheel()
 })
 </script>
+
+<style scoped>
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  top: -10%;
+  border-radius: 2px;
+  animation: confetti-fall linear infinite;
+  transform-origin: center;
+}
+
+@keyframes confetti-fall {
+  0% {
+    top: -10%;
+    transform: translateX(0) rotateZ(0deg);
+  }
+  100% {
+    top: 110%;
+    transform: translateX(calc((var(--random, 0.5) - 0.5) * 100px)) rotateZ(720deg);
+  }
+}
+
+/* 增加轉盤的視覺深度 */
+canvas {
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+}
+
+/* 按鈕漸變動畫 */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+button:not(:disabled) {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+</style>
