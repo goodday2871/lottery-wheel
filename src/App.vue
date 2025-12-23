@@ -8,7 +8,7 @@
     <div class="bg-white rounded-3xl shadow-2xl p-4 sm:p-8 max-w-4xl w-full relative">
       <!-- 轉盤完整區域：佔滿視窗高度 -->
       <div class="min-h-[calc(100dvh-2rem)] sm:min-h-[calc(100dvh-4rem)] flex flex-col">
-        <h1 class="text-[60px] leading-[80px] font-bold text-center mb-4 sm:mb-8 text-gray-800">幸運轉盤</h1>
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-center mb-4 sm:mb-8 text-gray-800 leading-tight">幸運轉盤</h1>
 
         <!-- 轉盤區域 -->
         <div class="flex flex-col items-center mb-4 sm:mb-8 flex-grow justify-center">
