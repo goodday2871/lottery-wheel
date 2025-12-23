@@ -1,27 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 flex flex-col items-center justify-center p-4 sm:p-8">
+  <div class="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 flex flex-col items-center p-4 sm:p-8">
     <div class="bg-white rounded-3xl shadow-2xl p-4 sm:p-8 max-w-4xl w-full">
-      <h1 class="text-2xl sm:text-4xl font-bold text-center mb-4 sm:mb-8 text-gray-800">幸運轉盤</h1>
+      <!-- 轉盤完整區域：佔滿視窗高度 -->
+      <div class="min-h-[calc(100dvh-2rem)] sm:min-h-[calc(100dvh-4rem)] flex flex-col">
+        <h1 class="text-[60px] leading-[80px] font-bold text-center mb-4 sm:mb-8 text-gray-800">幸運轉盤</h1>
 
-      <!-- 編輯選項區域 -->
-      <div class="mb-4 sm:mb-8">
-        <label class="block text-gray-700 font-semibold mb-2 text-sm sm:text-base">
-          編輯選項（每行一個）：
-        </label>
-        <textarea
-          v-model="optionsText"
-          @input="updateOptions"
-          rows="6"
-          placeholder="請輸入選項，每行一個&#10;例如：&#10;1桌&#10;2桌&#10;3桌"
-          class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 font-mono resize-y text-sm sm:text-base"
-        ></textarea>
-        <div class="text-xs sm:text-sm text-gray-500 mt-2">
-          目前共有 {{ options.length }} 個選項
-        </div>
-      </div>
-
-      <!-- 轉盤區域 -->
-      <div class="flex flex-col items-center mb-4 sm:mb-8">
+        <!-- 轉盤區域 -->
+        <div class="flex flex-col items-center mb-4 sm:mb-8 flex-grow justify-center">
         <div class="relative" :style="{ width: canvasSize + 'px', height: canvasSize + 'px' }">
           <!-- 指針（右側） -->
           <div
@@ -56,9 +41,27 @@
         </button>
       </div>
 
-      <!-- 說明文字 -->
-      <div v-if="options.length < 2" class="text-center text-gray-500 text-xs sm:text-sm">
-        請至少新增 2 個選項才能開始抽獎
+        <!-- 說明文字 -->
+        <div v-if="options.length < 2" class="text-center text-gray-500 text-xs sm:text-sm">
+          請至少新增 2 個選項才能開始抽獎
+        </div>
+      </div>
+
+      <!-- 編輯選項區域 -->
+      <div class="pt-8 border-t-2 border-gray-200">
+        <label class="block text-gray-700 font-semibold mb-2 text-sm sm:text-base">
+          編輯選項（每行一個）：
+        </label>
+        <textarea
+          v-model="optionsText"
+          @input="updateOptions"
+          rows="6"
+          placeholder="請輸入選項，每行一個&#10;例如：&#10;1桌&#10;2桌&#10;3桌"
+          class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 font-mono resize-y text-sm sm:text-base"
+        ></textarea>
+        <div class="text-xs sm:text-sm text-gray-500 mt-2">
+          目前共有 {{ options.length }} 個選項
+        </div>
       </div>
     </div>
 
@@ -116,7 +119,6 @@ const colors = [
 // 計算合適的 canvas 大小
 const calculateCanvasSize = () => {
   const width = window.innerWidth
-  const height = window.innerHeight
 
   // 根據螢幕大小決定轉盤大小
   if (width < 640) {
